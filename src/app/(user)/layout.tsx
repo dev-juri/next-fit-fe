@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Sparkles } from "lucide-react";
 
 export default function UserLayout({
     children,
@@ -35,8 +35,11 @@ export default function UserLayout({
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <header className="bg-white shadow-sm sticky top-0 z-10">
                 <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                    <Link href="/dashboard" className="text-xl font-bold text-primary">
-                        Next Fit Scraper
+                    <Link href="/dashboard" className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center shadow-lg shadow-primary/30">
+                            <Sparkles className="h-5 w-5 text-white" />
+                        </div>
+                        <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Next Fit</span>
                     </Link>
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center text-sm text-muted-foreground">

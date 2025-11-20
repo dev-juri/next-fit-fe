@@ -5,7 +5,7 @@ import { useAdminRequestMagicLink } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 
 export default function AdminLoginPage() {
     const [email, setEmail] = useState("");
@@ -22,7 +22,13 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
+            <div className="mb-8 flex items-center gap-2">
+                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center shadow-lg shadow-primary/30">
+                    <Sparkles className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">Next Fit</span>
+            </div>
             <Card className="w-full max-w-md">
                 <CardHeader>
                     <CardTitle>Admin Login</CardTitle>
