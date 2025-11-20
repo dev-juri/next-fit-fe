@@ -3,28 +3,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight, Sparkles, Zap, Target, TrendingUp } from "lucide-react";
 
+import LandingHeader from "@/components/layout/landing-header";
+
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900 font-sans selection:bg-primary/20">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white font-sans selection:bg-primary/20">
       {/* Navbar */}
-      <header className="sticky top-0 z-50 w-full border-b bg-white/80 dark:bg-slate-950/80 backdrop-blur-md supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-slate-950/60">
-        <div className="container mx-auto px-4 h-16 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center shadow-lg shadow-primary/30">
-              <Sparkles className="h-5 w-5 text-white" />
-            </div>
-            <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">Next Fit</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" asChild className="font-medium text-slate-600 dark:text-slate-300 hover:text-primary">
-              <Link href="/login">Log in</Link>
-            </Button>
-            <Button asChild className="rounded-full px-6 bg-gradient-to-r from-primary to-violet-600 shadow-lg shadow-primary/30 transition-all hover:shadow-primary/50 hover:scale-105">
-              <Link href="/register">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
+      <LandingHeader />
 
       <main>
         {/* Hero Section */}
@@ -43,13 +28,13 @@ export default function LandingPage() {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
-              <span className="text-slate-900 dark:text-white">Find Your </span>
+              <span className="text-slate-900">Find Your </span>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-violet-600 to-purple-600 animate-gradient">Dream Job</span>
               <br className="hidden md:block" />
-              <span className="text-slate-900 dark:text-white"> Without the Hassle</span>
+              <span className="text-slate-900"> Without the Hassle</span>
             </h1>
 
-            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
               Our advanced AI-powered scraper aggregates opportunities from top sources, giving you a competitive edge in your job search.
             </p>
 
@@ -59,35 +44,35 @@ export default function LandingPage() {
                   Start Searching Free <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="h-14 px-10 rounded-full text-lg border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white">
+              <Button size="lg" variant="outline" asChild className="h-14 px-10 rounded-full text-lg border-slate-200 hover:bg-slate-50 hover:text-slate-900">
                 <Link href="#jobs">View Latest Jobs</Link>
               </Button>
             </div>
 
             {/* Feature Pills */}
             <div className="flex flex-wrap items-center justify-center gap-4 max-w-3xl mx-auto">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm">
                 <Zap className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Real-time Updates</span>
+                <span className="text-sm font-medium text-slate-700">Real-time Updates</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm">
                 <Target className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Smart Filtering</span>
+                <span className="text-sm font-medium text-slate-700">Smart Filtering</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-slate-200 shadow-sm">
                 <TrendingUp className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Top Sources</span>
+                <span className="text-sm font-medium text-slate-700">Top Sources</span>
               </div>
             </div>
           </div>
         </section>
 
         {/* Job List Section */}
-        <section id="jobs" className="py-24 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+        <section id="jobs" className="py-24 bg-white border-t border-slate-200">
           <div className="container mx-auto px-4">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-bold tracking-tight mb-4 text-slate-900 dark:text-white">Latest Opportunities</h2>
-              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+              <h2 className="text-4xl font-bold tracking-tight mb-4 text-slate-900">Latest Opportunities</h2>
+              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                 Browse through our curated list of the most recent job postings. Register to unlock full access and advanced filters.
               </p>
             </div>
@@ -99,8 +84,8 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-12">
-        <div className="container mx-auto px-4 text-center text-slate-500 dark:text-slate-400 text-sm">
+      <footer className="bg-white border-t border-slate-200 py-12">
+        <div className="container mx-auto px-4 text-center text-slate-500 text-sm">
           <p>&copy; {new Date().getFullYear()} Next Fit. Built for efficiency.</p>
         </div>
       </footer>

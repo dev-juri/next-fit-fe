@@ -33,7 +33,16 @@ interface JobListProps {
 
 export default function JobList({ isPublic = false }: JobListProps) {
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { ref, inView } = useInView();
+
+    // Check if user is logged in
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const token = localStorage.getItem("token");
+            setIsLoggedIn(!!token);
+        }
+    }, []);
 
     // Fetch job tags for chips
     const { data: tagsData } = useQuery({
@@ -53,32 +62,74 @@ export default function JobList({ isPublic = false }: JobListProps) {
         status,
         error,
     } = useInfiniteQuery({
-        queryKey: ["jobs", selectedTag],
+        queryKey: ["jobs", selectedTag, isPublic],
         queryFn: async ({ pageParam }) => {
-            const params: Record<string, string> = {};
-            if (pageParam) params.cursor = pageParam as string;
-            if (selectedTag) params.tag = selectedTag;
+            try {
+                const params: Record<string, string> = {};
+                if (pageParam) params.cursor = pageParam as string;
+                if (selectedTag) params.tag = selectedTag;
 
-            const response = await api.get("/jobs", { params });
-            console.log("Jobs API Response:", response.data);
-            return response.data.data as JobsResponse;
+                const response = await api.get("/jobs", { params });
+                console.log("Jobs API Response:", response.data);
+                return response.data.data as JobsResponse;
+            } catch (err: any) {
+                // For public view, treat 403 and rate limit errors as successful responses
+                // This allows us to show the registration modal instead of an error
+                if (isPublic && (err?.response?.status === 403 || err?.response?.status === 429)) {
+                    console.log("Rate limit or auth error in public view, showing available jobs");
+                    // Return whatever jobs we have (empty array if none)
+                    return { jobs: [], nextCursor: undefined } as JobsResponse;
+                }
+                // For other errors or authenticated view, throw the error normally
+                throw err;
+            }
         },
         initialPageParam: undefined as string | undefined,
-        getNextPageParam: (lastPage: JobsResponse) => lastPage.nextCursor,
+        getNextPageParam: (lastPage: JobsResponse) => {
+            if (!lastPage.jobs || lastPage.jobs.length === 0) return undefined;
+            return lastPage.jobs[lastPage.jobs.length - 1].id;
+        },
     });
 
+    const isRestricted = isPublic && !isLoggedIn;
+
     useEffect(() => {
-        if (inView && hasNextPage && !isPublic) {
+        if (inView && hasNextPage && !isRestricted) {
             fetchNextPage();
         }
-    }, [inView, hasNextPage, fetchNextPage, isPublic]);
+    }, [inView, hasNextPage, fetchNextPage, isRestricted]);
 
     const jobs = data?.pages.flatMap((page) => page.jobs) || [];
-    const displayJobs = isPublic ? jobs.slice(0, 5) : jobs;
+
+    // If logged in, show all jobs (infinite scroll). If public and not logged in, limit to 5.
+    const displayJobs = isRestricted ? jobs.slice(0, 5) : jobs;
 
     const handleChipClick = (tag: string) => {
         setSelectedTag(selectedTag === tag ? null : tag);
     };
+
+    const RestrictedModal = (
+        <div className="relative mt-8">
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background z-10 h-20 -top-20 pointer-events-none"></div>
+            <Card className="bg-slate-900 text-white border-none overflow-hidden relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20"></div>
+                <CardContent className="flex flex-col items-center justify-center p-12 text-center space-y-6 relative z-20">
+                    <div className="h-16 w-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-2">
+                        <Lock className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="space-y-2">
+                        <h3 className="text-2xl font-bold">Unlock Full Access</h3>
+                        <p className="text-slate-300 max-w-md mx-auto text-lg">
+                            Register now to view unlimited job listings and find your perfect role today.
+                        </p>
+                    </div>
+                    <Button size="lg" asChild className="h-12 px-8 rounded-full bg-white text-slate-900 hover:bg-slate-100 hover:scale-105 transition-all font-semibold">
+                        <Link href="/register">Create Free Account</Link>
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
+    );
 
     return (
         <div className="space-y-8">
@@ -90,8 +141,8 @@ export default function JobList({ isPublic = false }: JobListProps) {
                             key={tag}
                             onClick={() => handleChipClick(tag)}
                             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedTag === tag
-                                    ? "bg-primary text-primary-foreground shadow-md"
-                                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                                ? "bg-primary text-primary-foreground shadow-md"
+                                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                                 }`}
                         >
                             {tag}
@@ -116,11 +167,15 @@ export default function JobList({ isPublic = false }: JobListProps) {
                         <p className="text-sm mt-1">{(error as any)?.response?.data?.message || error?.message || "Please try again later."}</p>
                     </div>
                 ) : displayJobs.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-                        <Search className="h-12 w-12 text-slate-300 mb-4" />
-                        <h3 className="text-lg font-medium text-slate-900">No jobs found</h3>
-                        <p className="text-muted-foreground mt-1">Try selecting a different tag.</p>
-                    </div>
+                    isRestricted ? (
+                        RestrictedModal
+                    ) : (
+                        <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+                            <Search className="h-12 w-12 text-slate-300 mb-4" />
+                            <h3 className="text-lg font-medium text-slate-900">No jobs found</h3>
+                            <p className="text-muted-foreground mt-1">Try selecting a different tag.</p>
+                        </div>
+                    )
                 ) : (
                     <div className="grid gap-4">
                         {displayJobs.map((job, index) => (
@@ -164,32 +219,11 @@ export default function JobList({ isPublic = false }: JobListProps) {
                             </Card>
                         ))}
 
-                        {/* Public View CTA */}
-                        {isPublic && jobs.length >= 5 && (
-                            <div className="relative mt-8">
-                                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background z-10 h-20 -top-20 pointer-events-none"></div>
-                                <Card className="bg-slate-900 text-white border-none overflow-hidden relative">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-purple-500/20"></div>
-                                    <CardContent className="flex flex-col items-center justify-center p-12 text-center space-y-6 relative z-20">
-                                        <div className="h-16 w-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center mb-2">
-                                            <Lock className="h-8 w-8 text-white" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <h3 className="text-2xl font-bold">Unlock Full Access</h3>
-                                            <p className="text-slate-300 max-w-md mx-auto text-lg">
-                                                Register now to view unlimited job listings and find your perfect role today.
-                                            </p>
-                                        </div>
-                                        <Button size="lg" asChild className="h-12 px-8 rounded-full bg-white text-slate-900 hover:bg-slate-100 hover:scale-105 transition-all font-semibold">
-                                            <Link href="/register">Create Free Account</Link>
-                                        </Button>
-                                    </CardContent>
-                                </Card>
-                            </div>
-                        )}
+                        {/* Public View CTA - Only show if restricted (public + not logged in) */}
+                        {isRestricted && displayJobs.length > 0 && RestrictedModal}
 
-                        {/* Infinite Scroll Loader */}
-                        {!isPublic && (
+                        {/* Infinite Scroll Loader - Show if NOT restricted */}
+                        {!isRestricted && (
                             <div ref={ref} className="flex justify-center p-8">
                                 {isFetchingNextPage && <Loader2 className="h-8 w-8 animate-spin text-primary" />}
                             </div>
