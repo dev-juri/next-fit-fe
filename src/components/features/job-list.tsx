@@ -132,9 +132,9 @@ export default function JobList({ isPublic = false }: JobListProps) {
     );
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 flex flex-col h-full overflow-hidden">
             {/* Job Tag Chips */}
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-4xl mx-auto flex-shrink-0 w-full">
                 <div className="flex flex-wrap gap-2 justify-center">
                     {tagsData?.map((tag) => (
                         <button
@@ -155,7 +155,7 @@ export default function JobList({ isPublic = false }: JobListProps) {
             </div>
 
             {/* Job List */}
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1 overflow-y-auto min-h-0 pr-2">
                 {status === "pending" ? (
                     <div className="flex flex-col items-center justify-center p-12 space-y-4">
                         <Loader2 className="h-10 w-10 animate-spin text-primary" />
@@ -179,7 +179,7 @@ export default function JobList({ isPublic = false }: JobListProps) {
                 ) : (
                     <div className="grid gap-4">
                         {displayJobs.map((job, index) => (
-                            <Card key={`${job.id}-${index}`} className="group hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+                            <Card key={`${job.id}-${index}`} className="relative group hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
                                 <CardHeader className="pb-3">
                                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                                         <div className="space-y-1">

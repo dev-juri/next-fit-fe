@@ -32,8 +32,8 @@ export default function UserLayout({
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <header className="bg-white shadow-sm sticky top-0 z-10">
+        <div className="h-screen overflow-hidden bg-gray-50 flex flex-col">
+            <header className="bg-white shadow-sm sticky top-0 z-10 flex-shrink-0">
                 <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                     <Link href="/dashboard" className="flex items-center gap-2">
                         <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary to-violet-600 flex items-center justify-center shadow-lg shadow-primary/30">
@@ -54,7 +54,7 @@ export default function UserLayout({
                 </div>
             </header>
 
-            <main className="flex-1 container mx-auto px-4 py-8">
+            <main className="flex-1 overflow-hidden relative container mx-auto px-4 py-8 flex flex-col">
                 {children}
             </main>
         </div>
